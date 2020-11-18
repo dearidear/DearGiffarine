@@ -1,4 +1,6 @@
+import 'package:deargiffarine/utility/normal_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class Register extends StatefulWidget {
@@ -8,6 +10,7 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   double lat, lng;
+  String name, user, password;
 
   @override
   void initState() {
@@ -38,6 +41,7 @@ class _RegisterState extends State<Register> {
       margin: EdgeInsets.only(top: 16),
       width: 250,
       child: TextField(
+        onChanged: (value) => name = value.trim(),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.face),
           labelText: 'Name',
@@ -52,6 +56,7 @@ class _RegisterState extends State<Register> {
       margin: EdgeInsets.only(top: 16),
       width: 250,
       child: TextField(
+        onChanged: (value) => user = value.trim(),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           labelText: 'Username',
@@ -66,6 +71,8 @@ class _RegisterState extends State<Register> {
       margin: EdgeInsets.only(top: 16),
       width: 250,
       child: TextField(
+        obscureText: true,
+        onChanged: (value) => password = value.trim(),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.lock),
           labelText: 'Password',
@@ -99,13 +106,41 @@ class _RegisterState extends State<Register> {
     );
   }
 
+  Set<Marker> myset() {
+    return <Marker>[
+      Marker(
+          markerId: MarkerId('idUser'),
+          position: LatLng(lat, lng),
+          infoWindow: InfoWindow(
+            title: 'คุณอยู่ที่นี่',
+            snippet: 'lat = $lat, lng = $lng',
+          )),
+    ].toSet();
+  }
+
   Expanded buildMap(BuildContext context) {
     return Expanded(
       child: Container(
-        color: Colors.cyan,
+        padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 64),
         width: MediaQuery.of(context).size.width,
-        child: Text('This is Map'),
+        child: lat == null
+            ? buildProgress()
+            : GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(lat, lng),
+                  zoom: 16,
+                ),
+                mapType: MapType.normal,
+                onMapCreated: (controller) {},
+                markers: myset(),
+              ),
       ),
+    );
+  }
+
+  Center buildProgress() {
+    return Center(
+      child: CircularProgressIndicator(),
     );
   }
 
@@ -116,7 +151,17 @@ class _RegisterState extends State<Register> {
         Container(
           width: MediaQuery.of(context).size.width,
           child: ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              print('name = $name, user = $user, password = $password');
+              if (name == null ||
+                  name.isEmpty ||
+                  user == null ||
+                  user.isEmpty ||
+                  password == null ||
+                  password.isEmpty) {
+                normalDialog(context, 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+              } else {}
+            },
             icon: Icon(Icons.cloud_upload),
             label: Text('Register'),
           ),
