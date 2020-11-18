@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "75317634581",
+    "firebase_url": "https://deargiffarine.firebaseio.com",
+    "project_id": "deargiffarine",
+    "storage_bucket": "deargiffarine.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75317634581:android:887732c3145c7c23dc501c",
+        "android_client_info": {
+          "package_name": "com.giffarinefactory.deargiffarine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "75317634581-tb122nl8v7l8clpa8rlbloi5ibvh4tl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrjBnAD5BeU17omZSt7WC_O7judeqCUjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "75317634581-tb122nl8v7l8clpa8rlbloi5ibvh4tl3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

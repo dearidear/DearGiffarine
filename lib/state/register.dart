@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:deargiffarine/models/user_model.dart';
 import 'package:deargiffarine/utility/normal_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -160,7 +164,9 @@ class _RegisterState extends State<Register> {
                   password == null ||
                   password.isEmpty) {
                 normalDialog(context, 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
-              } else {}
+              } else {
+                registerAndInsertData();
+              }
             },
             icon: Icon(Icons.cloud_upload),
             label: Text('Register'),
@@ -168,5 +174,39 @@ class _RegisterState extends State<Register> {
         ),
       ],
     );
+  }
+
+  Future<Null> registerAndInsertData() async {
+    await Firebase.initializeApp().then((value) async {
+      print('### Initial Success ###');
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: user, password: password)
+          .then((value) async {
+        print('### Success Register ###');
+        await FirebaseAuth.instance.authStateChanges().listen((event) async {
+          String uid = event.uid;
+          print('uid = $uid');
+
+          UserModel model = UserModel(
+              name: name,
+              email: user,
+              password: password,
+              lat: lat.toString(),
+              lng: lng.toString());
+
+          Map<String, dynamic> data = model.toMap();
+
+          await FirebaseFirestore.instance
+              .collection('user')
+              .doc(uid)
+              .set(data)
+              .then(
+                (value) => Navigator.pop(context),
+              );
+        });
+      }).catchError((error) {
+        normalDialog(context, error.message);
+      });
+    });
   }
 }
