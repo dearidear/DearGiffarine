@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -6,6 +7,32 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  double lat, lng;
+
+  @override
+  void initState() {
+    super.initState();
+    findLatLng();
+  }
+
+  Future<Null> findLatLng() async {
+    LocationData locationData = await findLocationData();
+    setState(() {
+      lat = locationData.latitude;
+      lng = locationData.longitude;
+      print('lat = $lat, lng = $lng');
+    });
+  }
+
+  Future<LocationData> findLocationData() async {
+    Location location = Location();
+    try {
+      return location.getLocation();
+    } catch (ret) {
+      return null;
+    }
+  }
+
   Container buildName() {
     return Container(
       margin: EdgeInsets.only(top: 16),
@@ -62,6 +89,7 @@ class _RegisterState extends State<Register> {
                 buildName(),
                 buildUser(),
                 buildPassword(),
+                buildMap(context),
               ],
             ),
           ),
@@ -71,14 +99,27 @@ class _RegisterState extends State<Register> {
     );
   }
 
+  Expanded buildMap(BuildContext context) {
+    return Expanded(
+      child: Container(
+        color: Colors.cyan,
+        width: MediaQuery.of(context).size.width,
+        child: Text('This is Map'),
+      ),
+    );
+  }
+
   Column buildElevatedButton() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        ElevatedButton.icon(
-          onPressed: () {},
-          icon: Icon(Icons.cloud_upload),
-          label: Text('Register'),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: ElevatedButton.icon(
+            onPressed: () {},
+            icon: Icon(Icons.cloud_upload),
+            label: Text('Register'),
+          ),
         ),
       ],
     );
