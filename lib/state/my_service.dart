@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deargiffarine/models/user_model.dart';
 import 'package:deargiffarine/state/authen.dart';
+import 'package:deargiffarine/state/information.dart';
+import 'package:deargiffarine/state/show_list_post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ class MyService extends StatefulWidget {
 
 class _MyServiceState extends State<MyService> {
   UserModel userModel;
+  Widget currentWidget = ShowListPost();
 
   @override
   void initState() {
@@ -46,6 +49,8 @@ class _MyServiceState extends State<MyService> {
     return Scaffold(
       appBar: AppBar(),
       drawer: buildDrawer(),
+      body: currentWidget,
+      
     );
   }
 
@@ -80,6 +85,9 @@ class _MyServiceState extends State<MyService> {
       title: Text('Show List Post'),
       subtitle: Text('แสดง Post ทั้งหมดที่มีในฐานข้อมูล'),
       onTap: () {
+        setState(() {
+          currentWidget = ShowListPost();
+        });
         Navigator.pop(context);
       },
     );
@@ -95,6 +103,9 @@ class _MyServiceState extends State<MyService> {
       title: Text('Information'),
       subtitle: Text('Display Information of User Logined'),
       onTap: () {
+        setState(() {
+          currentWidget = Information();
+        });
         Navigator.pop(context);
       },
     );
