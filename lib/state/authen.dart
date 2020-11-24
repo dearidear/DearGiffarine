@@ -1,5 +1,6 @@
 import 'package:deargiffarine/state/my_service.dart';
 import 'package:deargiffarine/state/register.dart';
+import 'package:deargiffarine/utility/normal_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,9 @@ class Authen extends StatefulWidget {
 }
 
 class _AuthenState extends State<Authen> {
+  String user, password;
+  bool statusRedEye = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -82,7 +86,16 @@ class _AuthenState extends State<Authen> {
       margin: EdgeInsets.only(top: 16),
       width: 250,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          if (user == null ||
+              user.isEmpty ||
+              password == null ||
+              password.isEmpty) {
+            normalDialog(context, 'Have Space ? Please Fill Every Blank');
+          } else {
+            checkAuthen();
+          }
+        },
         child: Text('Login'),
       ),
     );
@@ -93,6 +106,8 @@ class _AuthenState extends State<Authen> {
       margin: EdgeInsets.only(top: 16),
       width: 250,
       child: TextField(
+        onChanged: (value) => user = value.trim(),
+        keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           labelText: 'Username',
@@ -107,8 +122,19 @@ class _AuthenState extends State<Authen> {
       margin: EdgeInsets.only(top: 16),
       width: 250,
       child: TextField(
-        obscureText: true,
+        onChanged: (value) => password = value.trim(),
+        obscureText: statusRedEye,
         decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: statusRedEye
+                ? Icon(Icons.remove_red_eye)
+                : Icon(Icons.remove_red_eye_outlined),
+            onPressed: () {
+              setState(() {
+                statusRedEye = !statusRedEye;
+              });
+            },
+          ),
           prefixIcon: Icon(Icons.lock),
           labelText: 'Password',
           border: OutlineInputBorder(),
@@ -134,5 +160,23 @@ class _AuthenState extends State<Authen> {
       width: 120,
       child: Image.asset('images/logo1.png'),
     );
+  }
+
+  Future<Null> checkAuthen() async {
+    await Firebase.initializeApp().then((value) async {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: user, password: password)
+          .then(
+            (value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyService(),
+                ),
+                (route) => false),
+          )
+          .catchError((value) {
+        normalDialog(context, value.message);
+      });
+    });
   }
 }
