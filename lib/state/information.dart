@@ -28,9 +28,13 @@ class _InformationState extends State<Information> {
 
         await FirebaseFirestore.instance
             .collection('user')
-            .doc()
+            .doc(uid)
             .snapshots()
-            .listen((event) {});
+            .listen((event) {
+          setState(() {
+            userModel = UserModel.fromMap(event.data());
+          });
+        });
       });
     });
   }
@@ -38,7 +42,8 @@ class _InformationState extends State<Information> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('This is Information'),
-    );
+        body: userModel == null
+            ? Center(child: CircularProgressIndicator())
+            : Text(userModel.name));
   }
 }

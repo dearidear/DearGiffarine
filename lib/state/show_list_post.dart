@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deargiffarine/models/post_model.dart';
 import 'package:deargiffarine/models/user_model.dart';
 import 'package:deargiffarine/state/add_post.dart';
+import 'package:deargiffarine/utility/normal_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class ShowListPost extends StatefulWidget {
@@ -14,12 +16,34 @@ class ShowListPost extends StatefulWidget {
 class _ShowListPostState extends State<ShowListPost> {
   List<PostModel> postModels = List();
   List<String> namePost = List();
+  FirebaseMessaging messaging = FirebaseMessaging();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     readPost();
+    aboutNotification();
+  }
+
+  Future<Null> aboutNotification() async {
+    String token = await messaging.getToken();
+    print('token ==>> $token');
+    messaging.configure(
+      onLaunch: (message) {
+        print('message OnLaunch');
+      },
+      onMessage: (message) {
+        print('message OnMessage ==>> ${message.toString()}');
+        var result = message['notification'];
+        print('result ==>> ${result.toString()}');
+        String string = 'หัวข้อ ${result['title']} ข้อความ ${result['body']}';
+        normalDialog(context, string);
+      },
+      onResume: (message) {
+        print('message OnResume');
+      },
+    );
   }
 
   Future<Null> readPost() async {

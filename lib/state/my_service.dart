@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deargiffarine/models/user_model.dart';
 import 'package:deargiffarine/state/authen.dart';
+import 'package:deargiffarine/state/ebook.dart';
 import 'package:deargiffarine/state/information.dart';
 import 'package:deargiffarine/state/show_list_post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,6 +72,10 @@ class _MyServiceState extends State<MyService> {
                 Divider(
                   color: Colors.teal.shade400,
                 ),
+                buildListTileEbook(),
+                Divider(
+                  color: Colors.teal.shade400,
+                )
               ],
             ),
           ],
@@ -109,6 +114,25 @@ class _MyServiceState extends State<MyService> {
         setState(() {
           currentWidget = Information();
           title = 'Information';
+        });
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  ListTile buildListTileEbook() {
+    return ListTile(
+      leading: Icon(
+        Icons.book,
+        size: 36,
+        color: Colors.teal,
+      ),
+      title: Text('E-Book'),
+      subtitle: Text('Display E-Book'),
+      onTap: () {
+        setState(() {
+          currentWidget = Ebook();
+          title = 'E-Book';
         });
         Navigator.pop(context);
       },
